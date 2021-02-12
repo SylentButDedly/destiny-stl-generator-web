@@ -1,9 +1,10 @@
 import os
 import re
 import json
+
 from flask import Flask, request, render_template, send_file
 
-from DestinyModel import DestinyModel 
+from DestinyModel import DestinyModel
 
 app = Flask(__name__, static_folder='assets')
 
@@ -11,6 +12,7 @@ outputPath = "stl/"
 
 @app.route('/')
 def welcome():
+    print("hello2")
     # Load and format D1 gear data
     f = open("./gear/gear_d1.json", 'r')
     gear_d1 = json.loads(f.read())
@@ -35,6 +37,7 @@ def contact():
     
 @app.route('/download', methods=['GET'])
 def download():
+    print("hello")
     # Parse the arguments for item name and generate the key
     item = request.args.get('item')
     key = re.sub(r'[^a-zA-Z0-9 ]', '', item).lower()
@@ -77,11 +80,11 @@ def download():
             model.generate(filePathStl, filePathZip)
         except:
             output = "Unable to generate files for item: "+str(item)
-            return render_template('output.html', output=output)
+            return render_template('output.html', **locals())
             # error page
             
     # Return the file download page
-    return render_template('download.html', item=item, fileNameStl=fileNameStl, filePathStl=filePathStl, fileNameZip=fileNameZip, filePathZip=filePathZip)
+    return render_template('download.html', **locals())
 
 @app.route('/stl/<path:filename>')
 def send_tmp_file(filename):
